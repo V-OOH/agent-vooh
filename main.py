@@ -1,8 +1,9 @@
 # Importações
 import platform, sys, colorama
-import time
 
 from colorama import Fore, Style, init
+
+from src.detectar import detectar
 
 # Inicializa o colorama
 init()
@@ -79,9 +80,8 @@ elif len(argumentos) == 3:
     # Caso não tenha erros
     else:
         try:
-            while True:
-                print("Detectando Hardware")
-                time.sleep(10)
+            # Detecta informações do sistema
+            detectar()
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)
