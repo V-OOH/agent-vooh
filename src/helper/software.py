@@ -1,7 +1,5 @@
 import platform, getpass
 
-
-# noinspection SpellCheckingInspection
 def software() -> dict[str, str]:
     """
     Função para detectar as informações de software do dispositivo
