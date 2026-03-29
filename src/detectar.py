@@ -3,14 +3,14 @@ import time
 
 from colorama import Fore, Style, init
 
-from src.helper.software import software
-from src.helper.hardware import hardware
+from src.deteccao.software import software
+from src.deteccao.hardware import hardware
 
 # Inicializa o colorama
 init()
 
 # Função para obter informações do sistema
-def detectar():
+def detectar(plataforma: str):
     """
     Faz a detecção de informações do dispositivo
 

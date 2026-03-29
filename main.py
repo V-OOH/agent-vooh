@@ -2,7 +2,6 @@
 import platform, sys, colorama
 
 from colorama import Fore, Style, init
-
 from src.detectar import detectar
 
 # Inicializa o colorama
@@ -30,6 +29,9 @@ recursos = ["-c", "-r", "-n", "-d", "-p", "-t", "--all"]
 
 # Frequência padrão em segundos
 FREQ_PADRAO = 30
+
+# Plataforma
+plataforma = platform.system()
 
 # Valida se há argumentos
 if len(argumentos) == 1:
@@ -81,7 +83,7 @@ elif len(argumentos) == 3:
     else:
         try:
             # Detecta informações do sistema
-            detectar()
+            detectar(plataforma)
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)

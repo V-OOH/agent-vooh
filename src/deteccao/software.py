@@ -7,11 +7,11 @@ def software() -> dict[str, str]:
     Obtém as informações de:
         - Sistema (Linux ou Windows)
         - Kernel
-        - Versão do Kernel
+        - Versão do kernel
         - Host (Nome de máquina)
         - Usuário
 
-    Returns: Lista de informações do software
+    Returns: Dicionário de informações do software
     """
 
     # Informações do sistema (Linux ou Windows)
@@ -38,4 +38,5 @@ def software() -> dict[str, str]:
         "usuario": usuario
     }
 
+    # Retorna as informações obtidas
     return informacoes
