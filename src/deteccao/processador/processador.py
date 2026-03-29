@@ -2,36 +2,41 @@ import platform, subprocess, sys, psutil
 
 from colorama import Fore
 
-def processador(plataforma: str) -> dict[str, str]:
+def processador(plataforma: str) -> dict:
     """
-    Obtém informações do processador
+    Obtém informações detalhadas do processador
 
     Returns: Dicionário de informações do processador
     """
 
-    if plataforma == "Linux":
-        comando = subprocess.run(
-            "cat /proc/cpuinfo | grep 'model name' | head -n 1",
-            shell=True,
-            capture_output=True,
-            text=True
-        )
-        comando.stdout.split(":")[1].strip()
-        cpu = comando
+    # Valor inicial do nome da CPU
+    cpu_nome = "Desconhecido"
 
-    elif plataforma == "Windows":
-        comando = subprocess.run(
-            "wmic cpu get name",
-            shell=True,
-            capture_output=True,
-            text=True
-        )
-        comando.stdout.split("=")[1].strip()
-        cpu = comando
+    try:
+        if plataforma == "Linux":
+            comando = subprocess.run(
+                "cat /proc/cpuinfo | grep 'model name' | head -n 1",
+                shell=True,
+                capture_output=True,
+                text=True
+            )
 
-    else:
-        print(Fore.RED + "Erro: Plataforma não suportada!")
-        sys.exit(1)
+            cpu_nome = comando.stdout.split(":")[1].strip()
+
+        elif plataforma == "Windows":
+            comando = subprocess.run(
+                "wmic cpu get name",
+                shell=True,
+                capture_output=True,
+                text=True
+            )
+            cpu_nome = comando.stdout.split("=")[1].strip()
+
+        else:
+            print(Fore.RED + "Erro: Plataforma não suportada!")
+            sys.exit(1)
+    except Exception as excecao:
+        print(Fore.RED + f"Falha ao obter informaçõesda CPU: {excecao}")
 
     # Quantidade de núcleos físicos
     nucleos = psutil.cpu_count(logical=False)
@@ -50,7 +55,7 @@ def processador(plataforma: str) -> dict[str, str]:
 
     # Dicionário de informaçõe
     informacoes = {
-        "processador": cpu,
+        "processador": cpu_nome,
         "nucleos_fisicos": nucleos,
         "nucleos_totais": nucleos_total,
         "frequencia_min": freq_min,
