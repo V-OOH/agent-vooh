@@ -1,6 +1,10 @@
+import datetime
 import platform, getpass
 
-def software() -> dict[str, str]:
+import psutil
+
+
+def informacoes() -> dict:
     """
     Função para detectar as informações de software do dispositivo
 
@@ -29,14 +33,18 @@ def software() -> dict[str, str]:
     # Usuário
     usuario = getpass.getuser()
 
+    # Boot time
+    uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(psutil.boot_time())
+
     # Dicionário de informações
-    informacoes = {
+    informacoes_sistema = {
         "sistema" : sistema,
         "kernel": kernel,
         "versao": versao,
         "host": host,
-        "usuario": usuario
+        "usuario": usuario,
+        "uptime": uptime
     }
 
     # Retorna as informações obtidas
-    return informacoes
+    return informacoes_sistema

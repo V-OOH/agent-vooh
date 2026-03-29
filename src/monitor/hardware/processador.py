@@ -12,6 +12,7 @@ def processador(plataforma: str) -> dict:
     # Valor inicial do nome da CPU
     cpu_nome = "Desconhecido"
 
+    # Tenta detectar informações do processador
     try:
         if plataforma == "Linux":
             comando = subprocess.run(
@@ -54,7 +55,7 @@ def processador(plataforma: str) -> dict:
     freq_min = str(freq.min)
 
     # Dicionário de informaçõe
-    informacoes = {
+    informacoes_processador = {
         "processador": cpu_nome,
         "nucleos_fisicos": nucleos,
         "nucleos_totais": nucleos_total,
@@ -63,4 +64,4 @@ def processador(plataforma: str) -> dict:
     }
 
     # Retorna as informações
-    return informacoes
+    return informacoes_processador

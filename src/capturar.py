@@ -1,10 +1,12 @@
 import sys
 
-import psutil, time
+import psutil
+import time
 from colorama import Fore, Style
 
 # Importa o arquivo de script de salvar dados
 from csv.salvar import salvar
+
 
 # Captura os dados com base num componente e numa frequência
 def captura(componente, frequencia, plataforma):
