@@ -2,7 +2,7 @@ import platform, subprocess, sys, psutil
 
 from colorama import Fore
 
-def processador(plataforma: str) -> dict:
+def info_processador(plataforma: str) -> dict:
     """
     Obtém informações detalhadas do processador
 

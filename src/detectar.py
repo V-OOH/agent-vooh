@@ -2,16 +2,25 @@
 import time
 
 from colorama import Fore, Style, init
-from src.monitor.software.processos import capturar_processos
+
+from src.monitor.hardware.disco import info_disco
 from src.monitor.software.info import informacoes
+from src.monitor.hardware.processador import info_processador
+from src.monitor.hardware.ram import info_ram
+
+
+from src.monitor.software.processos import capturar_processos
 
 # Inicializa o colorama
 init()
 
 # Função para obter informações do sistema
-def sistema():
+def identificar(plataforma):
     """
-    Faz a detecção de informações do dispositivo
+    Faz a detecção inicial de informações do dispositivo
+
+    Args:
+        plataforma (str): Windows ou Linux
 
     Returns:
         Lista de informações do dispositivo
@@ -43,5 +52,26 @@ def sistema():
     time.sleep(4)
 
     # Informações de hardware
+    proc = info_processador(plataforma)
 
-    capturar_processos()
+    # Exibe as informações do processador
+    print(Fore.GREEN + "Processador: " + Style.RESET_ALL + proc['processador'])
+    print(Fore.GREEN + "     ➔ Quantidade de núcleos: " + Style.RESET_ALL + str(proc['nucleos_totais']))
+    print(Fore.GREEN + "     ➔ Núcleos físicos: " + Style.RESET_ALL + str(proc['nucleos_fisicos']))
+    print(Fore.GREEN + "     ➔ Núcleos totais: " + Style.RESET_ALL + str(proc['nucleos_totais']))
+    print(Fore.GREEN + "     ➔ Frequência mínima: " + Style.RESET_ALL + str(proc['frequencia_min']) + " Mhz")
+    print(Fore.GREEN + "     ➔ Frequência máxima: " + Style.RESET_ALL + str(proc['frequencia_max']) + " Mhz")
+
+    # Informações da RAM
+    ram = info_ram()
+
+    # Exibe as informações da RAM
+    print(Fore.GREEN + "Capacidade de RAM: " + Style.RESET_ALL + str(round(ram['total'], 2)) + " GiB")
+    print(Fore.GREEN + "     ➔ Disponível: " + Style.RESET_ALL + str(round(ram['disponivel'], 2)) + " GiB")
+    print(Fore.GREEN + "     ➔ Usado: " + Style.RESET_ALL + str(round(ram['percentual'], 2)) + "%")
+
+    # Informações do Disco
+    disco = info_disco(plataforma)
+
+    # Exibe as informações do disco
+

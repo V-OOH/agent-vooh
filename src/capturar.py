@@ -5,7 +5,7 @@ import time
 from colorama import Fore, Style
 
 # Importa o arquivo de script de salvar dados
-from csv.salvar import salvar
+from src.util.salvar import salvar
 
 
 # Captura os dados com base num componente e numa frequência
@@ -16,6 +16,7 @@ def captura(componente, frequencia, plataforma):
     Args:
         componente (str): O nome do componente.
         frequencia (int): O valor da frequência.
+        plataforma (str): Windows ou Linux
     """
 
     # Valida o tipo de componente a ser capturado os dados

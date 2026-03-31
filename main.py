@@ -1,9 +1,8 @@
 # Importações
-import platform
-import sys
+import platform, sys, psutil
 
 from colorama import Fore, Style, init
-from src.detectar import sistema
+from src.detectar import identificar
 
 # Inicializa o colorama
 init()
@@ -83,8 +82,8 @@ elif len(argumentos) == 3:
     # Caso não tenha erros
     else:
         try:
-            # Detecta informações do sistema
-            sistema()
+            # Identificar informações da máquina
+            identificar(platform.system())
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)
