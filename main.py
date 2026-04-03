@@ -2,8 +2,8 @@
 import platform, sys, psutil
 
 from colorama import Fore, Style, init
-from src.detectar import identificar
 from src.capturar import captura
+from src.detectar import identificar
 
 # Inicializa o colorama
 init()
@@ -25,9 +25,6 @@ print(Fore.GREEN + "© COPYRIGHT 2026 · VOOH - MONITORAMENTO DE DOOH · TODOS O
 # Obtém os argumentos
 argumentos = sys.argv
 
-# Recursos disponíveis
-recursos = ["-c", "-r", "-n", "-d", "-p", "-t", "--all"]
-
 # Frequência padrão em segundos
 FREQ_PADRAO = 30
 
@@ -37,58 +34,46 @@ plataforma = platform.system()
 # Valida se há argumentos
 if len(argumentos) == 1:
     print(Fore.YELLOW + "\nOs argumentos não foram passados. Executando no modo padrão." + Style.RESET_ALL)
-    recurso = "--all"
 
-# Valida se há 1 argumento (recurso passado)
-elif len(argumentos) == 2:
-
-    # Recurso a ser monitorado
-    recursos = argumentos[1]
-
-    # Frequência de captura dos dados
     frequencia = FREQ_PADRAO
 
-    # Valida se o recurso informado é válido
-    if argumentos[1] not in recursos:
-        print(Fore.RED + "\nErro: Recurso inválido!" + Style.RESET_ALL)
-        print(f"\nRecursos disponíveis: \n-c     CPU\n-r     RAM\n-n     Rede\n-d     Disco\n-p     Processos\n-t     Temperatura\n--all  Todos os recursos")
-        sys.exit(1)
-
-# Valida se há mais de 1 argumento (recurso e frequência passado)
-elif len(argumentos) == 3:
-
-    # Recuros a ser monitorado
-    recurso = argumentos[1]
+# Valida se há 1 argumento (recurso passado)
+if len(argumentos) > 1:
+    print("elif argumentos > 1")
 
     # Frequência de captura dos dados
-    frequencia = int(argumentos[2])
+    frequencia = int(argumentos[1])
 
-    # Valida se o recurso informado é válido
-    if argumentos[1] not in recursos:
-        print(Fore.RED + "\nErro: Recurso inválido!" + Style.RESET_ALL)
-        print(f"\nRecursos disponíveis: \n-c CPU\n-r RAM\n-n Rede\n-d Disco\n-p Processos\n-t Temperatura\n--all Todos os recursos")
-        sys.exit(1)
-
-    # Valida se o número passado é válido
-    elif frequencia <= 0 or frequencia > 18000:
+    if frequencia <= 0 or frequencia > 18000:
         print(Fore.RED + "Erro: Valor não pode ser negativo ou superior a 18.000 segundos (5h)" + Style.RESET_ALL)
+     
         sys.exit(1)
-
-    # Valida se há mais de 2 argumentos (não suportado)
-    elif len(argumentos) > 3:
-        print(Fore.RED + "Erro: Argumentos execessivos!" + Style.RESET_ALL)
-        print(Fore.YELLOW + "\nForma de uso: python3 main.py [recurso] [frequência]" + Style.RESET_ALL)
-        sys.exit(1)
-
-    # Caso não tenha erros
     else:
         try:
             # Identificar informações da máquina
-            identificar(plataforma=plataforma)
-
-            # Inicia a captura de informações
-            captura(componente=recurso, frequencia=frequencia, plataforma=plataforma)
+            identificar(platform.system())
+            captura()
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)
             sys.exit(0)
+  
+
+# Valida se há mais de 2 argumentos (não suportado)
+if len(argumentos) > 2:
+    print(Fore.RED + "Erro: Argumentos execessivos!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "\nForma de uso: python3 main.py [frequência]" + Style.RESET_ALL)
+    sys.exit(1)
+    print("elif argumentos 2")
+
+
+# Caso não tenha erros
+else:
+    try:
+        # Identificar informações da máquina
+        identificar(platform.system())
+        captura()
+
+    except KeyboardInterrupt:
+        print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)
+        sys.exit(0)
