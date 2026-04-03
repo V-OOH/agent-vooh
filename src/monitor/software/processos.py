@@ -1,14 +1,18 @@
 import psutil
 
-def capturar_processos(intervalo: int, info=None) ->dict:
+def capturar_processos(intervalo: int) -> list[dict[str, str]] | None:
     """
-    Função para capturar processos
+    Captura informações detalhadas dos processos do sistema.
 
     Returns:
-
+        Uma lista de dicionários com os processos
     """
 
+    # Items dos processos
     processos = psutil.process_iter(['username', 'name', 'pid', 'status', 'memory_info', 'cpu_percent'])
+
+    # Lista de processos
+    lista_processos = []
 
     # Percorre a lista de processos
     for processo in processos:
@@ -16,54 +20,21 @@ def capturar_processos(intervalo: int, info=None) ->dict:
         # Chave de acesso ao processo
         p = processo.info
 
-        # Usuário
-        usuario = p['username']
-
         # Valida se não tem usuário informado
-        if p['username'] is not None:
-            # Traz somente o usuario sem o dominio
-            usuario = p['username'].split('\\')[0]
-        else:
-            usuario = "Sistema"
+        usuario = p['username'].split('\\')[0] if p['username'] else "Sistema"
 
-        # Uso de memoria do processo
-        memoria = p['memory_info'].rss # RSS = Resident Set Size - o quanto está ocupando na RAM naquele momento
-
-        # Memória em MB
-        mem = memoria / (1024 ** 2)
-
-        # PID
-        pid = p['pid']
-
-        # Uso de CPU
-        uso_cpu = uso_cpu_por_processo(pid)
-
-        # Status
-        status = p['status']
-
-        # Nome do processo
-        nome = p['name']
-
-        # Informações
+        # Dados do processo
         info = {
-            "pid": pid,
+            "pid": p['pid'],
             "usuario": usuario,
-            "nome": nome,
-            "status": status,
-            "memoria": mem,
-            "uso_cpu": uso_cpu
+            "nome": p['name'],
+            "status": p['status'],
+            "memoria": p['memory_info'].rss,
+            "uso_cpu": p['cpu_percent']
         }
-    return info
 
-def uso_cpu_por_processo(pid: int) -> float:
+        # Adiciona os processos na lista de processos
+        lista_processos.append(info)
 
-    processos = psutil.Process(31821)
-    nucleos = psutil.cpu_count(logical=True)
-
-    p = processos
-    uso = p.cpu_percent(interval=5) / nucleos
-
-    return uso
-
-    
+    return lista_processos if lista_processos else None
    
