@@ -1,3 +1,5 @@
+![](https://github.com/V-OOH/agent-vooh/banner.png)
+
 # Agente de Monitoramento VOOH para dispositivos DOOH
 
 Este repositório conta com um projeto acadêmico para captura de dados de dispositivos DOOH, 2º semestre do curso de 
