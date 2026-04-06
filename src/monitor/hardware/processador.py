@@ -31,7 +31,8 @@ def info_processador(plataforma: str) -> dict:
                 capture_output=True,
                 text=True
             )
-            cpu_nome = comando.stdout.split("=")[1].strip()
+            cpu_nome = platform.processor() 
+            #comando.stdout.split("=")[1].strip()
 
         else:
             print(Fore.RED + "Erro: Plataforma não suportada!")
