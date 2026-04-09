@@ -70,6 +70,9 @@ def captura(frequencia: int, plataforma: str):
         # Frequência atual do processador
         frequencia_atual = p["frequencia_atual"]
 
+        # Percentual de uso da CPU
+        cpu_percentual = p["percentual"]
+
         # Informações da memória RAM
         ram = info_ram()
         r = ram
@@ -112,6 +115,7 @@ def captura(frequencia: int, plataforma: str):
             "frequencia_min",
             "frequencia_max",
             "frequencia_atual",
+            "cpu_percentual",
             "ram_total",
             "ram_disponivel",
             "ram_percentual",
@@ -134,6 +138,7 @@ def captura(frequencia: int, plataforma: str):
             "frequencia_min": frequencia_min,
             "frequencia_max": frequencia_max,
             "frequencia_atual": frequencia_atual,
+            "cpu_percentual": cpu_percentual,
             "ram_total": ram_total,
             "ram_disponivel": ram_disponivel,
             "ram_percentual": ram_percentual,
@@ -157,6 +162,8 @@ def captura(frequencia: int, plataforma: str):
                 "status",
                 "memoria",
                 "uso_cpu",
+                "mac",
+                "ip"
             ]
 
             # Processos
@@ -167,7 +174,9 @@ def captura(frequencia: int, plataforma: str):
                 "nome": p['nome'],
                 "status": p['status'],
                 "memoria": p['memoria'],
-                "uso_cpu": p['uso_cpu']
+                "uso_cpu": p['uso_cpu'],
+                "mac": mac,
+                "ip": ip
             }
 
             # Salva apenas processos com uso de CPU > 0

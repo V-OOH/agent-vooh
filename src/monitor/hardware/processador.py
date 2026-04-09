@@ -58,6 +58,9 @@ def info_processador(plataforma: str) -> dict:
     # Frequência atual
     freq_atual = str(freq.current)
 
+    # Percentual
+    percentual = str(psutil.cpu_percent(interval=None))
+
     # Dicionário de informaçõe
     informacoes_processador = {
         "processador": cpu_nome,
@@ -65,7 +68,8 @@ def info_processador(plataforma: str) -> dict:
         "nucleos_totais": nucleos_total,
         "frequencia_min": freq_min,
         "frequencia_max": freq_max,
-        "frequencia_atual": freq_atual
+        "frequencia_atual": freq_atual,
+        "percentual": percentual
     }
 
     # Retorna as informações
