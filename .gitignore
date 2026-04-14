@@ -6,3 +6,8 @@
 
 # Ignorar o cache
 __pycache__/
+
+.env
+
+dados.csv
+processos.csv
