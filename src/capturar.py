@@ -48,6 +48,9 @@ def captura(frequencia: int, plataforma: str):
         # Uso em percentual do disco
         disco_percentual = d["percentual"]
 
+        # Captura os processos inciais
+        capturar_processos(intervalo=frequencia)
+
         # Informações do processador
         processdor = info_processador(plataforma=plataforma)
         p = processdor
@@ -151,6 +154,15 @@ def captura(frequencia: int, plataforma: str):
         # Captura os processos
         processos = capturar_processos(intervalo=frequencia)
 
+        # Nome máquina
+        maquina = "D0001"
+
+        # Nome do arquivo de processos
+        proc_file = f"data/processos_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+
+        # Nome do arquivo de dados
+        dados_file = f"data/dados_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+
         for p in processos:
 
             # Cabeçalho dos processos
@@ -182,10 +194,13 @@ def captura(frequencia: int, plataforma: str):
             # Salva apenas processos com uso de CPU > 0
             if float(p['uso_cpu']) > 0:
                 # Salva os dados ds procesos
-                salvar(arquivo="data/processos.csv", campos=head, dados=proc)
+                salvar(arquivo=proc_file, campos=head, dados=proc)
 
         # Salva os dados em data/dados.csv
-        salvar(arquivo="data/dados.csv", campos=cabecalho, dados=dados)
+        salvar(arquivo=dados_file, campos=cabecalho, dados=dados)
+
+        # Emite a mensagem de salvamento
+        print(f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - Dados registrados")
 
         # Intervalo de captura e salvamento de dados
         time.sleep(frequencia)

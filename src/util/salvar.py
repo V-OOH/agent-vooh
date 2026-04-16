@@ -1,4 +1,6 @@
-import csv
+import csv, os
+
+
 
 def salvar(arquivo, campos, dados) -> bool:
     """
@@ -15,6 +17,11 @@ def salvar(arquivo, campos, dados) -> bool:
 
     # Realiza uma tentativa de escrita dos dados
     try:
+        # Verifica a existência do diretório
+        if not os.path.isdir("data"):
+            print("Criando diretório data/")
+            os.mkdir("data")
+
         # Realiza o processo de escrita
         with open(file=arquivo, mode='a', newline='') as arq:
             # Passa para o escritor o arquivo, bem como os headers e o delimitador
