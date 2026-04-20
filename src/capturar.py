@@ -1,6 +1,6 @@
 import os
 import time, psutil, sys, colorama
-
+from dotenv import load_dotenv
 from colorama import Fore, Style
 from src.monitor.hardware.disco import info_disco
 from src.monitor.hardware.processador import info_processador
@@ -19,6 +19,36 @@ def captura(frequencia: int, plataforma: str):
         frequencia: O valor da frequência.
         plataforma: Windows ou Linux
     """
+
+    # Carrega o .env
+    load_dotenv('.env')
+
+    # Variáveis de ambiente
+    env = [os.getenv('AWS_BUCKET_NAME'), os.getenv('AWS_OBJECT_NAME')]
+
+    # Valida por variável se não é None
+    for variavel in env:
+        if variavel is None:
+            print(Fore.RED + "Erro: variável de ambiente não definida no .env!" + Style.RESET_ALL)
+            sys.exit(1)
+
+    # Nome máquina
+    maquina = "D0001"
+
+    # Nome do arquivo de processos
+    proc_file = f"data/processos_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+
+    # Nome do arquivo de dados
+    dados_file = f"data/dados_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+
+    # Bucket
+    nome_bucket = env[0]
+
+    # Nome do objeto
+    objeto_processos = f"{env[1]}/{proc_file.split("data/")[1]}"
+
+    # Nome do dados
+    objeto_dados = f"{env[1]}/{dados_file.split("data/")[1]}"
 
     print(Fore.MAGENTA + f"Iniciando a captura de dados a cada {frequencia}s" + Style.RESET_ALL)
 
@@ -156,15 +186,6 @@ def captura(frequencia: int, plataforma: str):
         # Captura os processos
         processos = capturar_processos(intervalo=frequencia)
 
-        # Nome máquina
-        maquina = "D0001"
-
-        # Nome do arquivo de processos
-        proc_file = f"data/processos_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
-
-        # Nome do arquivo de dados
-        dados_file = f"data/dados_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
-
         for p in processos:
 
             # Cabeçalho dos processos
@@ -204,21 +225,11 @@ def captura(frequencia: int, plataforma: str):
         # Emite a mensagem de salvamento
         print(f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - Dados registrados")
 
-        # Bucket
-        nome_bucket = os.getenv('AWS_BUCKET_NAME')
-
-        # Nome do objeto
-        objeto = os.getenv('AWS_OBJECT_NAME')
-
-        # Valida se tem objeto
-        if objeto is "":
-            objeto = None
-
         # Enviar o arquivo de dados para S3
-        upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto)
+        upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados)
 
         # Enviar o arquivo de processos para s3
-        upload_file(arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto)
+        upload_file(arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto_processos)
 
         # Intervalo de captura e salvamento de dados
         time.sleep(frequencia)

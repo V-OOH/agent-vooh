@@ -19,7 +19,7 @@ def salvar(arquivo, campos, dados) -> bool:
     try:
         # Verifica a existência do diretório
         if not os.path.isdir("data"):
-            print("Criando diretório data/")
+            print("\nCriando diretório data/\n")
             os.mkdir("data")
 
         # Realiza o processo de escrita

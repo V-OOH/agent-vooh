@@ -44,4 +44,6 @@ def upload_file(arquivo, bucket, nome_objeto=None):
         logging.error(erro)
         print(Fore.RED + "Ocorreu um erro: " + f"{erro}" + Style.RESET_ALL)
         return False
+
+    print(f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - " + Fore.GREEN + f"{arquivo.split("data/")[1]} enviado para S3" + Style.RESET_ALL)
     return True
