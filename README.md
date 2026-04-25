@@ -65,6 +65,14 @@ Caso esteja usando um **shell** que não seja o **bash**, como, por exemplo, o *
 source .venv/bin/activate.fish
 ```
 
+É necessário configurar um `.env` com seus dados de credenciais da **_AWS_**, sendo:
+
+- `AWS_ACCESS_KEY_ID` - Token de ID de sessão
+- `AWS_SECRET_ACCESS_KEY` - Token secreto de chave de acesso
+- `AWS_SESSION_TOKEN` - Token de sessão
+- `AWS_BUCKET_NAME` - Nome do bucket S3
+- `AWS_OBJECT_NAME` - Nome do objeto a ser enviado/salvo no bucket s3
+
 ## Execução
 
 Com todas as dependências instaladas e/ou ambiente virtual configurado no dispositivo que irá ser monitorado,
