@@ -61,6 +61,10 @@ def captura(frequencia: int, plataforma: str):
         print("Plataforma não suportada")
         sys.exit()
 
+
+    # Contagem de quantos clicos serão necessários para enviar os dados a S3
+    contagem = 0
+
     # Loop
     while True:
 
@@ -225,11 +229,22 @@ def captura(frequencia: int, plataforma: str):
         # Emite a mensagem de salvamento
         print(f"[{time.strftime('%d-%m-%Y %H-%M-%S')}] - Dados registrados")
 
-        # Enviar o arquivo de dados para S3
-        upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados)
+        # Conta um ciclo
+        contagem+=1
 
-        # Enviar o arquivo de processos para s3
-        upload_file(arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto_processos)
+        # Caso a contagem seja igual a 10 registros (ciclos), envia dados para a S3
+        if contagem == 10:
+
+            print("\nSalvando dados em nuvem...\n")
+
+            # Enviar o arquivo de dados para S3
+            upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados)
+
+            # Enviar o arquivo de processos para s3
+            upload_file(arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto_processos)
+
+            # Reseta a contagem
+            contagem = 0
 
         # Intervalo de captura e salvamento de dados
         time.sleep(frequencia)
