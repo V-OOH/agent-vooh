@@ -36,19 +36,19 @@ def captura(frequencia: int, plataforma: str):
     maquina = "D0001"
 
     # Nome do arquivo de processos
-    proc_file = f"data/processos_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+    proc_file = f"data/processos_{time.strftime('%d_%m_%Y')}_{maquina}.csv"
 
     # Nome do arquivo de dados
-    dados_file = f"data/dados_{time.strftime("%d_%m_%Y")}_{maquina}.csv"
+    dados_file = f"data/dados_{time.strftime('%d_%m_%Y')}_{maquina}.csv"
 
     # Bucket
     nome_bucket = env[0]
 
     # Nome do objeto
-    objeto_processos = f"{env[1]}/{proc_file.split("data/")[1]}"
+    objeto_processos = f"{env[1]}/{proc_file.split('data/')[1]}"
 
     # Nome do dados
-    objeto_dados = f"{env[1]}/{dados_file.split("data/")[1]}"
+    objeto_dados = f"{env[1]}/{dados_file.split('data/')[1]}"
 
     print(Fore.MAGENTA + f"Iniciando a captura de dados a cada {frequencia}s" + Style.RESET_ALL)
 
@@ -223,7 +223,7 @@ def captura(frequencia: int, plataforma: str):
         salvar(arquivo=dados_file, campos=cabecalho, dados=dados)
 
         # Emite a mensagem de salvamento
-        print(f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - Dados registrados")
+        print(f"[{time.strftime('%d-%m-%Y %H-%M-%S')}] - Dados registrados")
 
         # Enviar o arquivo de dados para S3
         upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados)

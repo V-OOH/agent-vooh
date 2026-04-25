@@ -9,7 +9,7 @@ def upload_file(arquivo, bucket, nome_objeto=None):
     Faz upload de um arquivo para um bucket na S3
 
     Args:
-        arquivo: File to upload
+        arquivo: File para upload
         bucket: Bucket para upload
         nome_objeto: É o nome único e o caminho completo que um arquivo receberá após o upload
 
@@ -18,7 +18,7 @@ def upload_file(arquivo, bucket, nome_objeto=None):
     """
 
     # Carrega as credenciais do .env
-    load_dotenv()
+    load_dotenv('.env')
 
     # Valida se o nome do objeto é nulo e atribui
     if nome_objeto is None:
@@ -38,12 +38,12 @@ def upload_file(arquivo, bucket, nome_objeto=None):
         response = s3_client.upload_file(arquivo, bucket, nome_objeto)
 
         if response:
-            print(Fore.GREEN + f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - Sucesso: Arquivo {arquivo} enviado!")
+            print(Fore.GREEN + f"[{time.strftime('%d-%m-%Y %H-%M-%S')}] - Sucesso: Arquivo {arquivo} enviado!")
 
     except ClientError as erro:
         logging.error(erro)
         print(Fore.RED + "Ocorreu um erro: " + f"{erro}" + Style.RESET_ALL)
         return False
 
-    print(f"[{time.strftime("%d-%m-%Y %H-%M-%S")}] - " + Fore.GREEN + f"{arquivo.split("data/")[1]} enviado para S3" + Style.RESET_ALL)
+    print(f"[{time.strftime('%d-%m-%Y %H-%M-%S')}] - " + Fore.GREEN + f"{arquivo.split('data/')[1]} enviado para S3" + Style.RESET_ALL)
     return True
