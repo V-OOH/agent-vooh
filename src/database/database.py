@@ -2,6 +2,7 @@ import os
 import sys
 from typing import Any
 
+import dotenv
 import mysql.connector
 from colorama import Fore, Style, init
 from mysql.connector import Error
@@ -16,9 +17,11 @@ def conectar():
 
     """
 
+    dotenv.load_dotenv('.env')
+
     # Configurações de acesso
     config = {
-        'hostname': os.getenv('DB_HOSTNAME'),
+        'host': os.getenv('DB_HOSTNAME'),
         'database': os.getenv('DB_DATABASE'),
         'user': os.getenv('DB_USER'),
         'password': os.getenv('DB_PASSWORD'),
