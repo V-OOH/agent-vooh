@@ -161,7 +161,7 @@ def captura(frequencia: int, plataforma: str):
         tempo = f"{dias}, {horas}, {minutos}"
 
         # Temperatura do processador
-        temperaturas = info_temperatura()
+        temperaturas = info_temperatura(plataforma)
 
         # Temperatura atual
         temp_atual = temperaturas['atual']
