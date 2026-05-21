@@ -1,10 +1,20 @@
-import os, colorama
+import os
+import sys
+from typing import Any
+
 import mysql.connector
-from mysql.connector import Error
 from colorama import Fore, Style, init
+from mysql.connector import Error
+
 init()
 
 def conectar():
+    """
+    Realiza a conexão com o banco de dados
+
+    Returns: Conexão com o banco de dados
+
+    """
 
     # Configurações de acesso
     config = {
@@ -37,3 +47,47 @@ def conectar():
         return None
 
 
+def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
+    """
+    Retorna o ID do equipamento registrado no banco de dados
+
+    Args:
+        mac_address: Endereço MAC do equipamento
+
+    Returns:
+        Dicionário com o ID do equipamento
+    """
+
+    sql = f"""
+    SELECT id, identificacao FROM display
+    WHERE mac = %s
+    """
+
+    conexao = conectar()
+
+    if conexao:
+        try:
+            cursor = conexao.cursor(dictionary=True)
+
+            cursor.execute(sql, mac_address)
+
+            resultado = cursor.fetchall()
+
+            if resultado is None:
+                print(Fore.RED + "Erro ao validar o ID do equipamento. Tente novamente mais tarde." + Style.RESET_ALL)
+                sys.exit(0)
+            else:
+                dados = {
+                    "id": resultado['id'],
+                    "mac": resultado['mac']
+                }
+
+            return dados
+        except Error as erro:
+            print(Fore.RED + f"Erro: {erro}" + Style.RESET_ALL)
+            conexao.rollback()
+        finally:
+            cursor.close()
+            conexao.close()
+            print(Fore.BLUE + "Conexão com banco de dados encerrada" + Style.RESET_ALL)
+    return None
