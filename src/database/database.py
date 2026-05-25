@@ -1,13 +1,12 @@
 import os
 import sys
+from pathlib import Path
 from typing import Any
 
 import dotenv
 import mysql.connector
 from colorama import Fore, Style, init
 from mysql.connector import Error
-
-init()
 
 def conectar():
     """
@@ -17,7 +16,8 @@ def conectar():
 
     """
 
-    dotenv.load_dotenv('.env')
+    env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+    dotenv.load_dotenv(env_path)
 
     # Configurações de acesso
     config = {
@@ -28,12 +28,18 @@ def conectar():
         'port': os.getenv('DB_PORT')
     }
 
+
     try:
+        for var, valor in config.items():
+            if valor is None:
+                print(Fore.RED + f"Erro: Variável {var} não definida!" + Style.RESET_ALL)
+                sys.exit(0)
+
         # Tenta estabelecer a conexão com o banco
         conexao = mysql.connector.connect(**config)
 
         if conexao.is_connected():
-            print("Conexão com o banco de dados estabelecida!")
+            print(Fore.GREEN +  f"Conexão com o banco de dados estabelecida!" +  Style.RESET_ALL)
             return conexao
 
     except Error as erro:
@@ -61,8 +67,8 @@ def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
         Dicionário com o ID do equipamento
     """
 
-    sql = f"""
-    SELECT id, identificacao FROM display
+    sql = """
+    SELECT id, mac FROM display
     WHERE mac = %s
     """
 
@@ -72,12 +78,12 @@ def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
         try:
             cursor = conexao.cursor(dictionary=True)
 
-            cursor.execute(sql, mac_address)
+            cursor.execute(sql, (mac_address,))
 
-            resultado = cursor.fetchall()
+            resultado = cursor.fetchone()
 
             if resultado is None:
-                print(Fore.RED + "Erro ao validar o ID do equipamento. Tente novamente mais tarde." + Style.RESET_ALL)
+                print(Fore.RED + "Erro: Equipamento não cadastrado." + Style.RESET_ALL)
                 sys.exit(0)
             else:
                 dados = {
@@ -92,5 +98,5 @@ def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
         finally:
             cursor.close()
             conexao.close()
-            print(Fore.BLUE + "Conexão com banco de dados encerrada" + Style.RESET_ALL)
+            print(Fore.BLUE + "Conexão com o banco de dados encerrada!" + Style.RESET_ALL)
     return None

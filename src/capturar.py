@@ -1,43 +1,58 @@
 import gc
 import os
-import time, psutil, sys, colorama
-from dotenv import load_dotenv
-from colorama import Fore, Style
+import sys
+import time
 
-from src.monitor.hardware.temperatura import info_temperatura
+import colorama
+import psutil
+from colorama import Fore, Style
+from dotenv import load_dotenv
+
 from src.monitor.hardware.disco import info_disco
 from src.monitor.hardware.processador import info_processador
 from src.monitor.hardware.ram import info_ram
 from src.monitor.hardware.rede import info_rede
+from src.monitor.hardware.temperatura import info_temperatura
 from src.monitor.software.boot import boot_time
-from src.util.salvar import salvar
 from src.monitor.software.processos import capturar_processos
 from src.s3.upload import upload_file
+from src.util.salvar import salvar
+
 
 # Captura os dados com base num componente e numa frequência
-def captura(frequencia: int, plataforma: str):
+def captura(frequencia: int, plataforma: str, id_display: str):
     """
     Faz a captura de dados de um componente de hardware da máquina
 
     Args:
+        id_display: ID do display
         frequencia: O valor da frequência.
         plataforma: Windows ou Linux
     """
 
     # Carrega o .env
-    load_dotenv('.env')
+    load_dotenv(".env")
 
     # Variáveis de ambiente
-    env = [os.getenv('AWS_BUCKET_NAME'), os.getenv('AWS_OBJECT_NAME')]
+    env = [os.getenv("AWS_BUCKET_NAME"), os.getenv("AWS_OBJECT_NAME")]
 
     # Valida por variável se não é None
     for variavel in env:
         if variavel is None:
-            print(Fore.RED + "Erro: variável de ambiente não definida no .env!" + Style.RESET_ALL)
+            print(
+                Fore.RED
+                + "Erro: variável de ambiente não definida no .env!"
+                + Style.RESET_ALL
+            )
             sys.exit(1)
 
+    # Caso o ID do display seja vazio, encerra
+    if id_display is None:
+        print(Fore.YELLOW + "Não é possível continuar..." + Style.RESET_ALL)
+        sys.exit(0)
+
     # Nome máquina
-    maquina = "D0001"
+    maquina = f"D{id_display:04d}" # Formata com zeros à esquerda - D0001
 
     # Nome do arquivo de processos
     proc_file = f"data/processos_{time.strftime('%d_%m_%Y')}_{maquina}.csv"
@@ -54,7 +69,11 @@ def captura(frequencia: int, plataforma: str):
     # Nome do dados
     objeto_dados = f"{env[1]}/{dados_file.split('data/')[1]}"
 
-    print(Fore.MAGENTA + f"Iniciando a captura de dados a cada {frequencia}s" + Style.RESET_ALL)
+    print(
+        Fore.MAGENTA
+        + f"Iniciando a captura de dados a cada {frequencia}s"
+        + Style.RESET_ALL
+    )
 
     print(Fore.CYAN + "\nExecutando ..." + Style.RESET_ALL)
 
@@ -65,13 +84,11 @@ def captura(frequencia: int, plataforma: str):
         print("Plataforma não suportada")
         sys.exit()
 
-
     # Contagem de quantos clicos serão necessários para enviar os dados a S3
     contagem = 0
 
     # Loop
     while True:
-
         # Informações do disco
         disco = info_disco(plataforma=plataforma)
         d = disco[0]
@@ -137,16 +154,16 @@ def captura(frequencia: int, plataforma: str):
         upload = n["upload"]
 
         # Bytes de download
-        download= n["download"]
+        download = n["download"]
 
         # MacAdress
         mac = n["mac"]
 
         # IP
-        ip = n['ip']
+        ip = n["ip"]
 
         # Tempo de boot
-        boot = boot_time()['boot_time']
+        boot = boot_time()["boot_time"]
 
         # Dias
         dias = boot.days
@@ -164,17 +181,18 @@ def captura(frequencia: int, plataforma: str):
         temperaturas = info_temperatura(plataforma)
 
         # Temperatura atual
-        temp_atual = temperaturas['atual']
+        temp_atual = temperaturas["atual"]
 
         # Temperatura alta
-        temp_alta = temperaturas['alta']
+        temp_alta = temperaturas["alta"]
 
         # Temperatura crítica
-        temp_critica = temperaturas['critica']
+        temp_critica = temperaturas["critica"]
 
         # Cabeçalhos (Campos)
         cabecalho = [
             "data_hora",
+            "id_display",
             "total_disco",
             "disco_usado",
             "disco_livre",
@@ -196,12 +214,13 @@ def captura(frequencia: int, plataforma: str):
             "boot_time",
             "temperatura_atual",
             "temperatura_alta",
-            "temperatura_critica"
+            "temperatura_critica",
         ]
 
         # Dicionários de dados da leitura
         dados = {
-            "data_hora":time.strftime('%d-%m-%Y %H:%M:%S'),
+            "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
+            "id_display": id_display,
             "total_disco": total_disco,
             "disco_usado": disco_usado,
             "disco_livre": disco_livre,
@@ -223,17 +242,17 @@ def captura(frequencia: int, plataforma: str):
             "boot_time": tempo,
             "temperatura_atual": temp_atual,
             "temperatura_alta": temp_alta,
-            "temperatura_critica": temp_critica
+            "temperatura_critica": temp_critica,
         }
 
         # Captura os processos
         processos = capturar_processos(intervalo=frequencia)
 
         for p in processos:
-
             # Cabeçalho dos processos
             head = [
                 "data_hora",
+                "id_display",
                 "pid",
                 "usuario",
                 "nome",
@@ -241,24 +260,25 @@ def captura(frequencia: int, plataforma: str):
                 "memoria",
                 "uso_cpu",
                 "mac",
-                "ip"
+                "ip",
             ]
 
             # Processos
             proc = {
                 "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
-                "pid": p['pid'],
-                "usuario": p['usuario'],
-                "nome": p['nome'],
-                "status": p['status'],
-                "memoria": p['memoria'],
-                "uso_cpu": p['uso_cpu'],
+                "id_display": id_display,
+                "pid": p["pid"],
+                "usuario": p["usuario"],
+                "nome": p["nome"],
+                "status": p["status"],
+                "memoria": p["memoria"],
+                "uso_cpu": p["uso_cpu"],
                 "mac": mac,
-                "ip": ip
+                "ip": ip,
             }
 
             # Salva apenas processos com uso de CPU > 0
-            if float(p['uso_cpu']) > 0:
+            if float(p["uso_cpu"]) > 0:
                 # Salva os dados ds procesos
                 salvar(arquivo=proc_file, campos=head, dados=proc)
 
@@ -273,18 +293,21 @@ def captura(frequencia: int, plataforma: str):
         proc = {}
 
         # Conta um ciclo
-        contagem+=1
+        contagem += 1
 
         # Caso a contagem seja igual a 10 registros (ciclos), envia dados para a S3
         if contagem == 10:
-
             print("\nSalvando dados em nuvem...\n")
 
             # Enviar o arquivo de dados para S3
-            upload_file(arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados)
+            upload_file(
+                arquivo=dados_file, bucket=nome_bucket, nome_objeto=objeto_dados
+            )
 
             # Enviar o arquivo de processos para s3
-            upload_file(arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto_processos)
+            upload_file(
+                arquivo=proc_file, bucket=nome_bucket, nome_objeto=objeto_processos
+            )
 
             # Reseta a contagem
             contagem = 0

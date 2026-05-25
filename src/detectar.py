@@ -1,28 +1,25 @@
 # Importações
 import time
 
+import sys
 from colorama import Fore, Style, init
 
 from src.monitor.hardware.disco import info_disco
 from src.monitor.software.info import informacoes
 from src.monitor.hardware.processador import info_processador
 from src.monitor.hardware.ram import info_ram
-from src.database.database import conectar
+from src.database.database import buscar_id_display
 
 # Inicializa o colorama
 init()
 
 # Função para obter informações do sistema
-def identificar(plataforma: str) -> str:
+def identificar(plataforma: str) -> str | None:
     """
     Faz a detecção inicial de informações do dispositivo
 
     Args:
-        frequencia: Em segundos
         plataforma: Windows ou Linux
-
-    Returns:
-        Lista de informações do dispositivo
     """
 
     # Aviso de detecção do dispositivo
@@ -75,11 +72,15 @@ def identificar(plataforma: str) -> str:
     # Exibe as informações do disco
     print(Fore.GREEN + "Capacidade do disco: " + Style.RESET_ALL + f"{round((float(disco[0]['total']) / 1024 ** 3), 2)} GiB")
     print(Fore.GREEN + "     ➔ Disponível: " + Style.RESET_ALL + f"{round((float(disco[0]['usado']) / 1024 ** 3), 2)} GiB")
-    print(Fore.GREEN + "     ➔ Usado: " + Style.RESET_ALL + f"{round(float(disco[0]['percentual']))}%")
+    print(Fore.GREEN + "     ➔ Usado: " + Style.RESET_ALL + f"{round(float(disco[0]['percentual']))}%\n")
 
-    # Conexão com o banco de dados
-    conexao = conectar()
+    print(Fore.YELLOW + f"Obtendo o registro do equipamento..." + Style.RESET_ALL)
 
+    # Faz a busca do ID do display cadastrado
+    display = buscar_id_display("a4:63:a1:6e:67:09")
 
-
-    return
+    if display:
+        return display['id']
+    else:
+        print(Fore.RED + "Não é possível associar um registro neste equipamento!" + Style.RESET_ALL)
+    return None
