@@ -20,7 +20,7 @@ from src.util.salvar import salvar
 
 
 # Captura os dados com base num componente e numa frequência
-def captura(frequencia: int, plataforma: str, id_display: str):
+def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
     """
     Faz a captura de dados de um componente de hardware da máquina
 
@@ -192,6 +192,7 @@ def captura(frequencia: int, plataforma: str, id_display: str):
         # Cabeçalhos (Campos)
         cabecalho = [
             "data_hora",
+            "id_empresa",
             "id_display",
             "total_disco",
             "disco_usado",
@@ -220,6 +221,7 @@ def captura(frequencia: int, plataforma: str, id_display: str):
         # Dicionários de dados da leitura
         dados = {
             "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
+            "id_empresa": id_empresa,
             "id_display": id_display,
             "total_disco": total_disco,
             "disco_usado": disco_usado,
@@ -252,6 +254,7 @@ def captura(frequencia: int, plataforma: str, id_display: str):
             # Cabeçalho dos processos
             head = [
                 "data_hora",
+                "id_empresa",
                 "id_display",
                 "pid",
                 "usuario",
@@ -266,6 +269,7 @@ def captura(frequencia: int, plataforma: str, id_display: str):
             # Processos
             proc = {
                 "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
+                "id_empresa": id_empresa,
                 "id_display": id_display,
                 "pid": p["pid"],
                 "usuario": p["usuario"],

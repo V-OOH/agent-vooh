@@ -66,9 +66,11 @@ if len(argumentos) > 1:
     else:
         try:
             # Identificar informações da máquina
-            id_display = identificar(plataforma=plataforma)
+            i = identificar(plataforma=plataforma)
+            id_display = i['id']
+            id_empresa = i['id_empresa']
             print("\n")
-            captura(frequencia=frequencia, plataforma=plataforma, id_display=id_display)
+            captura(frequencia=frequencia, plataforma=plataforma, id_display=id_display, id_empresa=id_empresa)
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)

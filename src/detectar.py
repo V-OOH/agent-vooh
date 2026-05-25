@@ -2,6 +2,8 @@
 import time
 
 import sys
+from typing import Any
+
 from colorama import Fore, Style, init
 
 from src.monitor.hardware.disco import info_disco
@@ -14,7 +16,7 @@ from src.database.database import buscar_id_display
 init()
 
 # Função para obter informações do sistema
-def identificar(plataforma: str) -> str | None:
+def identificar(plataforma: str) -> dict[str, Any] | None:
     """
     Faz a detecção inicial de informações do dispositivo
 
@@ -80,7 +82,14 @@ def identificar(plataforma: str) -> str | None:
     display = buscar_id_display("a4:63:a1:6e:67:09")
 
     if display:
-        return display['id']
+        # ID do display + ID da empresa
+        dados_equipamento = {
+            "id": display['id_display'],
+            "mac": display['mac_display'],
+            "id_empresa": display['id_empresa']
+        }
+
+        return dados_equipamento
     else:
         print(Fore.RED + "Não é possível associar um registro neste equipamento!" + Style.RESET_ALL)
     return None
