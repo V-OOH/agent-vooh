@@ -22,25 +22,35 @@ def info_temperatura(plataforma: str) -> dict[str, float | None]:
 
 def get_temp_windows() -> dict[str, float | None]:
     """
-    Obtém a temperatura no Windows via PowerShell (WMI).
+    Obtém a temperatura no Windows via PowerShell (CIM).
+    Requer execução como Administrador.
     """
-    cmd = "get-wmiobject msacpi_thermalzonetemperature -namespace root/wmi"
-    dados = {"atual": None, "alta": None, "critica": None}
+    cmd = "(Get-CimInstance -Namespace root/wmi -ClassName MsAcpi_ThermalZoneTemperature).CurrentTemperature"
+    
+    dados = {"atual": None, "alta": '80', "critica": '100'}
 
     try:
-        process = subprocess.run(["powershell", "-Command", cmd], capture_output=True, text=True)
-        output = process.stdout
+        process = subprocess.run(
+            ["powershell", "-NoProfile", "-Command", cmd], 
+            capture_output=True, 
+            text=True, 
+            check=True
+        )
+        
+        output = process.stdout.strip()
 
-        if "CurrentTemperature" in output:
-            for line in output.split('\n'):
-                if "CurrentTemperature" in line:
-                    temp_raw = int(line.split(':')[-1].strip())
-                    # Converte de Kelvin (multiplicado por 10) para Celsius
-                    dados["atual"] = (temp_raw / 10.0) - 273.15
-                    return dados
-        return dados
-    except Exception:
-        return dados
+        if output:
+            temp_raw = float(output)
+            dados["atual"] = round((temp_raw / 10.0) - 273.15, 2)
+            
+    except subprocess.CalledProcessError as e:
+        print(f"{Fore.RED}Erro de Permissão: Você precisa rodar o script como ADMINISTRADOR.{Style.RESET_ALL}")
+    except ValueError:
+        print(f"{Fore.YELLOW}Erro: O sistema retornou um valor inválido ou não suportado.{Style.RESET_ALL}")
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+        
+    return dados
 
 
 def get_temp_linux() -> dict[str, float | None]:

@@ -162,6 +162,25 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
         # IP
         ip = n["ip"]
 
+          # Erros de input
+        errin = n["errin"]
+
+        # Drops de input
+        dropin = n["dropin"]
+
+        # Unidade maxima de transmissao
+        mtu = n["mtu"]
+
+        # Latência
+        latencia = n["latencia"]
+
+        # Conexões
+        conn_established = n["conn_established"]
+        conn_listen = n["conn_listen"]
+        conn_time_wait = n["conn_time_wait"]
+        conn_close_wait = n["conn_close_wait"]
+        conn_syn_sent = n["conn_syn_sent"]
+
         # Tempo de boot
         boot = boot_time()["boot_time"]
 
@@ -210,6 +229,15 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             "ram_percentual",
             "upload",
             "download",
+            "errin", 
+            "dropin", 
+            "mtu", 
+            "latencia",
+            "conn_established",
+            "conn_listen", 
+            "conn_time_wait", 
+            "conn_close_wait",
+            "conn_syn_sent",
             "mac",
             "ip",
             "boot_time",
@@ -239,6 +267,15 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             "ram_percentual": ram_percentual,
             "upload": upload,
             "download": download,
+            "errin": errin,
+            "dropin": dropin,
+            "mtu": mtu,
+            "latencia": latencia,
+            "conn_established": conn_established,
+            "conn_listen": conn_listen,
+            "conn_time_wait": conn_time_wait,
+            "conn_close_wait": conn_close_wait,
+            "conn_syn_sent": conn_syn_sent,
             "mac": mac,
             "ip": ip,
             "boot_time": tempo,
