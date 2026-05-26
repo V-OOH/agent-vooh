@@ -10,5 +10,8 @@ data/*.csv
 # Ignorar o cache
 __pycache__/
 
+# Ignorar o cache python
+*.pyc
+
 # Ignora o .env
 .env
