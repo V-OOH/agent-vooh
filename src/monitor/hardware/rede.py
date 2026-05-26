@@ -58,6 +58,22 @@ def info_rede()-> dict[str, str]:
     conexoes = psutil.net_connections(kind='inet')
     estados = [c.status for c in conexoes]
 
+    todas_interfaces = []
+    for nome, stats in io_counters.items():
+        if_st = psutil.net_if_stats().get(nome)
+        todas_interfaces.append({
+            "nome":       nome,
+            "upload":     stats.bytes_sent,
+            "download":   stats.bytes_recv,
+            "dropin":     stats.dropin,
+            "dropout":    stats.dropout,
+            "errin":      stats.errin,
+            "errout":     stats.errout,
+            "mtu":        if_st.mtu   if if_st else 0,
+            "ativa":      if_st.isup  if if_st else False,
+            "velocidade": if_st.speed if if_st else 0,
+        })
+
     # Informações
     info = {
         "ip": i['ip'],
@@ -72,7 +88,8 @@ def info_rede()-> dict[str, str]:
         "conn_listen": estados.count('LISTEN'),
         "conn_time_wait": estados.count('TIME_WAIT'),
         "conn_close_wait": estados.count('CLOSE_WAIT'),
-        "conn_syn_sent": estados.count('SYN_SENT')
+        "conn_syn_sent": estados.count('SYN_SENT'),
+        "interfaces": todas_interfaces,
     }
 
     return info
