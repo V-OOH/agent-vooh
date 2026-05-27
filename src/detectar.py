@@ -11,6 +11,7 @@ from src.monitor.software.info import informacoes
 from src.monitor.hardware.processador import info_processador
 from src.monitor.hardware.ram import info_ram
 from src.database.database import buscar_id_display
+from src.monitor.hardware.rede import info_mac_ip_address
 
 # Inicializa o colorama
 init()
@@ -79,7 +80,7 @@ def identificar(plataforma: str) -> dict[str, Any] | None:
     print(Fore.YELLOW + f"Obtendo o registro do equipamento..." + Style.RESET_ALL)
 
     # Faz a busca do ID do display cadastrado
-    display = buscar_id_display("a4:63:a1:6e:67:09")
+    display = buscar_id_display(mac_address=info_mac_ip_address()['mac'])
 
     if display:
         # ID do display + ID da empresa
