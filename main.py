@@ -67,10 +67,27 @@ if len(argumentos) > 1:
         try:
             # Identificar informações da máquina
             i = identificar(plataforma=plataforma)
-            id_display = i['id']
-            id_empresa = i['id_empresa']
-            print("\n")
-            captura(frequencia=frequencia, plataforma=plataforma, id_display=id_display, id_empresa=id_empresa)
+
+            if i is not None:
+                dados_equipamento = {
+                    "id_display": i["id"],
+                    "id_empresa": i["id_empresa"],
+                    "id_zona": i["id_zona"],
+                }
+
+                print("\n")
+
+                captura(
+                    frequencia=frequencia,
+                    plataforma=plataforma,
+                    dados_equipamento=dados_equipamento,
+                )
+            else:
+                print(
+                    Fore.RED
+                    + "Não foi possível vincular registro do equipamento"
+                    + Style.RESET_ALL
+                )
 
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\nInterrompendo..." + Style.RESET_ALL)

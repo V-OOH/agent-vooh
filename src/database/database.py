@@ -69,12 +69,13 @@ def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
 
     sql = """
     SELECT 
-        d.id AS 'id_display',
+        d.idDisplay AS 'id_display',
         d.mac AS 'mac_display',
-        e.id AS 'id_empresa'
+        e.idcadastroEmpresa AS 'id_empresa',
+        d.fkZona AS 'id_zona'
     FROM display AS d
-    INNER JOIN empresa AS e 
-    ON d.fk_empresa = e.id
+    INNER JOIN cadastroEmpresa AS e 
+    ON d.fkEmpresa = e.idcadastroEmpresa
     WHERE d.mac = %s
     """
 
@@ -95,7 +96,8 @@ def buscar_id_display(mac_address: str) -> dict[str, Any] | None:
                 dados = {
                     "id_display": resultado['id_display'],
                     "mac_display": resultado['mac_display'],
-                    "id_empresa": resultado['id_empresa']
+                    "id_empresa": resultado['id_empresa'],
+                    "id_zona": resultado['id_zona']
                 }
 
             return dados

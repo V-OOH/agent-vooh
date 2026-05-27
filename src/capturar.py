@@ -20,7 +20,7 @@ from src.util.salvar import salvar
 
 
 # Captura os dados com base num componente e numa frequência
-def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
+def captura(frequencia: int, plataforma: str, dados_equipamento: dict[str, str]):
     """
     Faz a captura de dados de um componente de hardware da máquina
 
@@ -47,12 +47,12 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             sys.exit(1)
 
     # Caso o ID do display seja vazio, encerra
-    if id_display is None:
+    if dados_equipamento is None:
         print(Fore.YELLOW + "Não é possível continuar..." + Style.RESET_ALL)
         sys.exit(0)
 
     # Nome máquina
-    maquina = f"D{id_display:04d}" # Formata com zeros à esquerda - D0001
+    maquina = f"D{int(dados_equipamento['id_display']):04d}"  # Formata com zeros à esquerda - D0001
 
     # Nome do arquivo de processos
     proc_file = f"data/processos_{time.strftime('%d_%m_%Y')}_{maquina}.csv"
@@ -82,7 +82,7 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
 
     if plataforma not in plataforma_suportadas:
         print("Plataforma não suportada")
-        sys.exit()
+        sys.exit(0)
 
     # Contagem de quantos clicos serão necessários para enviar os dados a S3
     contagem = 0
@@ -162,7 +162,7 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
         # IP
         ip = n["ip"]
 
-          # Erros de input
+        # Erros de input
         errin = n["errin"]
 
         # Drops de input
@@ -181,8 +181,8 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
         conn_close_wait = n["conn_close_wait"]
         conn_syn_sent = n["conn_syn_sent"]
 
-        #Capturando todas as interfaces
-        interfaces_json  = n["interfaces"]
+        # Capturando todas as interfaces
+        interfaces_json = n["interfaces"]
 
         # Tempo de boot
         boot = boot_time()["boot_time"]
@@ -216,6 +216,7 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             "data_hora",
             "id_empresa",
             "id_display",
+            "id_zona",
             "total_disco",
             "disco_usado",
             "disco_livre",
@@ -232,13 +233,13 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             "ram_percentual",
             "upload",
             "download",
-            "errin", 
-            "dropin", 
-            "mtu", 
+            "errin",
+            "dropin",
+            "mtu",
             "latencia",
             "conn_established",
-            "conn_listen", 
-            "conn_time_wait", 
+            "conn_listen",
+            "conn_time_wait",
             "conn_close_wait",
             "conn_syn_sent",
             "mac",
@@ -253,8 +254,9 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
         # Dicionários de dados da leitura
         dados = {
             "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
-            "id_empresa": id_empresa,
-            "id_display": id_display,
+            "id_empresa": dados_equipamento["id_empresa"],
+            "id_display": dados_equipamento["id_display"],
+            "id_zona": dados_equipamento["id_zona"],
             "total_disco": total_disco,
             "disco_usado": disco_usado,
             "disco_livre": disco_livre,
@@ -298,6 +300,7 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
                 "data_hora",
                 "id_empresa",
                 "id_display",
+                "id_zona",
                 "pid",
                 "usuario",
                 "nome",
@@ -311,8 +314,9 @@ def captura(frequencia: int, plataforma: str, id_display: str, id_empresa: str):
             # Processos
             proc = {
                 "data_hora": time.strftime("%d-%m-%Y %H:%M:%S"),
-                "id_empresa": id_empresa,
-                "id_display": id_display,
+                "id_empresa": dados_equipamento["id_empresa"],
+                "id_display": dados_equipamento["id_display"],
+                "id_zona": dados_equipamento["id_zona"],
                 "pid": p["pid"],
                 "usuario": p["usuario"],
                 "nome": p["nome"],

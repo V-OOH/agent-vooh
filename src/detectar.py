@@ -86,7 +86,8 @@ def identificar(plataforma: str) -> dict[str, Any] | None:
         dados_equipamento = {
             "id": display['id_display'],
             "mac": display['mac_display'],
-            "id_empresa": display['id_empresa']
+            "id_empresa": display['id_empresa'],
+            "id_zona": display['id_zona']
         }
 
         return dados_equipamento
