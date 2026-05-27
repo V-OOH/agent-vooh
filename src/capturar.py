@@ -181,9 +181,6 @@ def captura(frequencia: int, plataforma: str, dados_equipamento: dict[str, str])
         conn_close_wait = n["conn_close_wait"]
         conn_syn_sent = n["conn_syn_sent"]
 
-        # Capturando todas as interfaces
-        interfaces_json = n["interfaces"]
-
         # Tempo de boot
         boot = boot_time()["boot_time"]
 
@@ -248,7 +245,6 @@ def captura(frequencia: int, plataforma: str, dados_equipamento: dict[str, str])
             "temperatura_atual",
             "temperatura_alta",
             "temperatura_critica",
-            "interfaces_json",
         ]
 
         # Dicionários de dados da leitura
@@ -288,7 +284,6 @@ def captura(frequencia: int, plataforma: str, dados_equipamento: dict[str, str])
             "temperatura_atual": temp_atual,
             "temperatura_alta": temp_alta,
             "temperatura_critica": temp_critica,
-            "interfaces_json": str(interfaces_json),
         }
 
         # Captura os processos
