@@ -77,47 +77,66 @@ def info_rede()-> dict[str, str]:
 
     return info
 
-def info_mac_ip_address()-> dict[str, str] | None:
+def info_mac_ip_address()-> dict[str, str]:
     """
     Retorna o IP e o MacAddress
 
     Returns: Dicionário de informações da placa de rede
 
     """
-    # Realiza uma chamada de conexão via socket
+
+    # IP Mac Inicial
+    ip_mac = {
+        "ip": "0.0.0.0",
+        "mac": "00:00:00:00:00:00"
+    }
+
+    # Variável de IP local inicial
+    ip_local_detectado = None
+
+    # Socket de conexão
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    # Define o tempo de tentativa de conexão
+    s.settimeout(2)
+
     try:
-        # Tenta se conectar ao IP público do Goolgle
+        # Tenta se conectar ao IP público do Google
         s.connect(("8.8.8.8", 80))
-        ip1 = s.getsockname()[0]
+        ip_local_detectado = s.getsockname()[0]
+
     except Exception as erro:
-        print("Ocorreu um erro:" + str(erro))
+        # Aviso de erro na leitura do IP e MAC
+        print(Fore.YELLOW + f"Aviso: Rede indisponível ({erro})" + Style.RESET_ALL)
 
-    # Lista as interfaces de IP
+        # Lista as interfaces de IP
+        interfaces = psutil.net_if_addrs()
+
+    finally:
+        # Fecha a conexão
+        s.close()
+
+    # Caso não encontre IP, retorna o IP e Mac Padrão
+    if not ip_local_detectado:
+        return ip_mac
+
+    # Interface de rede
     interfaces = psutil.net_if_addrs()
-
-    # IP e Mac
-    ip_mac = {}
 
     # Percorre a lista de interfaces e endereços
     for nome_interface, addrs in interfaces.items():
-        ip = None
-        mac = None
+        temp_ip = None
+        temp_mac = None
 
         for addr in addrs:
             if addr.family == socket.AF_INET:
-                ip = addr.address
+                temp_ip = addr.address
             elif addr.family == psutil.AF_LINK:
-                mac = addr.address
+                temp_mac = addr.address
 
-        if ip1 == ip:
+        if temp_ip == ip_local_detectado:
+            ip_mac["ip"] = temp_ip
+            ip_mac["mac"] = temp_mac if temp_mac else "MAC não encontrado"
+            break
 
-            ip_mac = {
-                "ip": ip,
-                "mac": mac
-            }
-
-            return ip_mac
-
-    return None
+    return ip_mac
