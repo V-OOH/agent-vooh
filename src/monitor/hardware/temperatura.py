@@ -40,9 +40,11 @@ def get_temp_windows() -> dict[str, float | None]:
         output = process.stdout.strip()
 
         if output:
-            temp_raw = float(output)
-            dados["atual"] = round((temp_raw / 10.0) - 273.15, 2)
+            primeira_linha = output.splitlines()[0].strip()
             
+            temp_raw = float(primeira_linha)
+            dados["atual"] = round((temp_raw / 10.0) - 273.15, 2)
+
     except subprocess.CalledProcessError as e:
         print(f"{Fore.RED}Erro de Permissão: Você precisa rodar o script como ADMINISTRADOR.{Style.RESET_ALL}")
     except ValueError:
